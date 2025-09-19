@@ -1,1 +1,1 @@
-# quiz-web-app
+a simple interface to create interactive quizzes
