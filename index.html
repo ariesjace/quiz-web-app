@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blood Collection Equipment Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 700px;
+      text-align: center;
+    }
+    h1, h2 {
+      margin-bottom: 1rem;
+    }
+    .btn {
+      background: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .btn:hover {
+      background: #005fa3;
+    }
+    .options {
+      margin-top: 1rem;
+      text-align: left;
+    }
+    .option {
+      display: block;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+    .option:hover {
+      background: #e0e0e0;
+    }
+    .progress {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Start Screen -->
+    <div id="start-screen">
+      <h1>Blood Collection Equipment Quiz</h1>
+      <p>Test your knowledge with this 50-question quiz.</p>
+      <button class="btn" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden">
+      <h2 id="question"></h2>
+      <div id="options" class="options"></div>
+      <button class="btn" onclick="nextQuestion()">Next</button>
+      <div id="progress" class="progress"></div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden">
+      <h2>Quiz Completed!</h2>
+      <p id="score"></p>
+      <button class="btn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {q:"What is the primary purpose of a phlebotomy chair's adjustable armrests that lock in place?",options:["Comfort","Prevent falling","Allow proper positioning","Accommodate heights"],a:1},
+      {q:"Which type of glove is recommended by OSHA for phlebotomy procedures?",options:["Latex with powder","Powder-free gloves","Sterile surgical gloves","Vinyl only"],a:1},
+      {q:"What should be done with gloves after each patient encounter?",options:["Disinfect with alcohol","Change if contaminated","Single-use and discard","Sterilize for next"],a:2},
+      {q:"What is the primary function of a tourniquet in phlebotomy?",options:["Stop bleeding","Restrict blood flow","Prevent infection","Measure blood pressure"],a:1},
+      {q:"How should a contaminated tourniquet be handled?",options:["Disinfect","Discard immediately","Reuse for same patient","Store separately"],a:1},
+      {q:"What is the most common antiseptic used in phlebotomy?",options:["Hydrogen peroxide","Povidone-iodine","70% isopropyl alcohol","Benzalkonium chloride"],a:2},
+      {q:"What is the key difference between antiseptics and disinfectants?",options:["Antiseptics are stronger","Disinfectants for living tissue","Antiseptics for tissue, disinfectants for surfaces","No difference"],a:2},
+      {q:"How long should patients hold pressure on the puncture site?",options:["1-2 min","3-5 min","10-15 min","Until bleeding stops"],a:1},
+      {q:"What is the relationship between needle gauge and diameter?",options:["Higher gauge = larger","Higher gauge = smaller","Unrelated","Higher gauge = longer"],a:1},
+      {q:"Which needle length is typical for hypodermic needles?",options:["0.5-0.75 in","1-1.5 in","2-3 in","3-4 in"],a:1},
+      {q:"What is the typical length for winged-infusion (butterfly) needles?",options:["0.5-0.75 in","1-1.5 in","2-3 in","Variable"],a:0},
+      {q:"What safety feature must provide one-hand activation and containment?",options:["Tourniquet","Needle safety devices","Tube holders","Antiseptic"],a:1},
+      {q:"What can cause premature loss of vacuum in evacuated tubes?",options:["Storage only","Dropping only","Opening/dropping/advancing too far","Expired tubes"],a:2},
+      {q:"What is the size range of evacuated tubes?",options:["1-5 mL","2-15 mL","5-20 mL","10-25 mL"],a:1},
+      {q:"Which anticoagulant works by binding calcium ions?",options:["Heparin","EDTA","Sodium fluoride","Thrombin"],a:1},
+      {q:"Most common anticoagulant in hematology?",options:["Heparin","Sodium citrate","EDTA","Potassium oxalate"],a:2},
+      {q:"Excess EDTA in a blood sample causes?",options:["Enhanced clotting","Better preservation","Cell shrinkage","No effect"],a:2},
+      {q:"Concentration of buffered sodium citrate in light blue tubes?",options:["3.2%","3.8%","10.2%","15.8%"],a:0},
+      {q:"Blood-to-anticoagulant ratio in light blue tubes?",options:["5:1","9:1","10:1","15:1"],a:1},
+      {q:"Underfilled citrate tubes cause?",options:["No effect","Falsely prolonged times","Falsely shortened times","More accurate"],a:1},
+      {q:"How does heparin prevent clotting?",options:["Chelating calcium","Precipitating calcium","Cofactor of antithrombin prevents thrombin","Breaks down glucose"],a:2},
+      {q:"Oxalates as anticoagulants cause?",options:["Cells swell","Normal morphology","RBCs crenated","WBCs destroyed"],a:2},
+      {q:"Primary function of sodium fluoride?",options:["Prevent clotting","Prevent glycolysis","Enhance coagulation","Preserve morphology"],a:1},
+      {q:"If glycolysis not prevented, glucose decreases at?",options:["5 mg/dL/hr","10 mg/dL/hr","15 mg/dL/hr","20 mg/dL/hr"],a:1},
+      {q:"Clotting time in SST tubes?",options:["5 min","15-30 min","45-60 min","2-3 hrs"],a:1},
+      {q:"Thixotropic gel after centrifugation?",options:["Dissolves","Remains bottom","Moves between cells/serum","Evaporates"],a:2},
+      {q:"Inversions for red top tubes (no additive)?",options:["0","3-4","5-6","8"],a:0},
+      {q:"Clotting time in red top tubes?",options:["15 min","30 min","45 min","60 min"],a:3},
+      {q:"Tube for STAT serum chemistry?",options:["Red","Gold SST","Orange","Light green"],a:2},
+      {q:"Additive in gray top tubes?",options:["EDTA","Heparin","Potassium oxalate + Sodium fluoride","Sodium citrate"],a:2},
+      {q:"Tube color for lead determinations?",options:["Royal blue","Tan","Yellow","White"],a:1},
+      {q:"Concentration of SPS in yellow top tubes?",options:["0.01%","0.025%","0.05%","0.1%"],a:1},
+      {q:"Inversions for lavender top tubes?",options:["3-4","5-6","8","10"],a:2},
+      {q:"Tube used for molecular/DNA tests?",options:["Pink","White","Tan","Royal blue"],a:1},
+      {q:"Special labeling for pink top tubes?",options:["Allergy info","Physician auth","Cross-match label (AABB)","Biohazard"],a:2},
+      {q:"CTAD stands for?",options:["Citrate, Thrombin...","Citrate, Theophyline, Adenosine, Dipyridamole","Calcium, Theophyline...","Citrate, Theophyline, Antithrombin, Dextrose"],a:1},
+      {q:"Test performed with light blue top tube?",options:["CBC","Blood glucose","Prothrombin time","Blood culture"],a:2},
+      {q:"Primary use of red/light gray top tubes?",options:["Hematology","Chemistry","Discard tube/secondary specimen","Coagulation"],a:2},
+      {q:"Specimen in green top tubes?",options:["Serum","Plasma","Whole blood","Clotted blood"],a:1},
+      {q:"Tube for ammonia testing?",options:["Red","Green with heparin","Gray","Light blue"],a:1},
+      {q:"Effect of potassium oxalate alone?",options:["Cells swell","Cells shrink","Normal size","Destroyed"],a:1},
+      {q:"Why use double balanced oxalate (2:3)?",options:["Enhance clotting","Balance shrink/swell effects","Improve stability","Prevent hemolysis"],a:1},
+      {q:"Main advantage of plastic evacuated tubes?",options:["Better vacuum","Lower cost","Safety (less breakage)","Better mixing"],a:2},
+      {q:"Which anticoagulant occurs in vivo?",options:["EDTA","Sodium citrate","Heparin","Potassium oxalate"],a:2},
+      {q:"What to check before using evacuated tube?",options:["Color","Expiration date","Manufacturer","Storage temp"],a:1},
+      {q:"Which additive enhances platelet activation?",options:["EDTA","Heparin","Clot activators","Sodium fluoride"],a:2},
+      {q:"Recommended procedure for fragile skin?",options:["Smaller gauge","Extra pressure","Avoid adhesive directly","Skip antiseptic"],a:2},
+      {q:"How long should adhesive bandage remain?",options:["5-10 min","15-20 min","30-45 min","24 hrs"],a:1},
+      {q:"Primary concern with latex products?",options:["Cost","Allergies","Durability","Sample contamination"],a:1},
+      {q:"Tube most appropriate for CBC testing?",options:["Red","Light blue","Lavender","Green"],a:2}
+    ];
+
+    let current = 0, score = 0, selected = null;
+
+    function startQuiz() {
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('quiz-screen').classList.remove('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[current];
+      document.getElementById('question').innerText = q.q;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = "";
+      q.options.forEach((opt,i)=>{
+        const div = document.createElement('div');
+        div.innerText = opt;
+        div.className = "option";
+        div.onclick = ()=> selectOption(i);
+        optionsDiv.appendChild(div);
+      });
+      document.getElementById('progress').innerText = `Question ${current+1} of ${questions.length}`;
+    }
+
+    function selectOption(i){
+      selected = i;
+      document.querySelectorAll('.option').forEach((el,idx)=>{
+        el.style.background = idx===i ? "#d0ebff" : "#f0f0f0";
+      });
+    }
+
+    function nextQuestion(){
+      if(selected===null) return;
+      if(selected===questions[current].a) score++;
+      current++;
+      selected=null;
+      if(current<questions.length){
+        showQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function endQuiz(){
+      document.getElementById('quiz-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+      document.getElementById('score').innerText = `You scored ${score} out of ${questions.length}`;
+    }
+
+    function restartQuiz(){
+      current=0; score=0; selected=null;
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('start-screen').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
