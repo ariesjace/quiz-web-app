@@ -39,11 +39,17 @@ h1, h2 {
   justify-content: space-between;
   margin-top: 1rem;
 }
-.option {
+.option { 
   display: block;
   margin: 0.4rem 0;
   padding: 0.4rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   cursor: pointer;
+}
+
+#quizTitle {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
 }
