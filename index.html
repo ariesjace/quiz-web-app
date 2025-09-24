@@ -2,19 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz Hub</title>
-  <style src="styles.css" rel="stylesheet"></style>
+  <title>Quiz App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container" id="app">
-    <h1>Quiz Hub</h1>
-    <p>Select a quiz to begin:</p>
-    <button class="btn" onclick="selectQuiz('blood')">Blood Collection Equipment Quiz</button>
-    <button class="btn" onclick="selectQuiz('capi')">Capillary Puncture</button>
-    <button class="btn" onclick="selectQuiz('veni')">Venipuncture</button>
-    <button class="btn" onclick="selectQuiz('hemo')">Hemoglobin Determination</button>
-    <button class="btn" onclick="selectQuiz('hema')">Hematocrit Determination</button>
+  <div class="container" id="quizApp">
+    <h1>Quiz App</h1>
+
+    <!-- Quiz Selection Screen -->
+    <div id="quizSelection">
+      <h2>Select a Quiz</h2>
+      <button class="btn" onclick="selectQuiz('quiz1')">Quiz 1: Placeholder</button>
+      <button class="btn" onclick="selectQuiz('quiz2')">Quiz 2: Placeholder</button>
+      <button class="btn" onclick="selectQuiz('quiz3')">Quiz 3: Placeholder</button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quizScreen" style="display:none;">
+      <button class="btn exit-btn" onclick="exitQuiz()">Exit Quiz</button>
+      <h2 id="progress"></h2>
+      <div id="questionsArea"></div>
+      <div class="nav-buttons">
+        <button class="btn" onclick="prevPage()">Back</button>
+        <div>
+          <button class="btn" onclick="finishQuiz()">Finish Quiz</button>
+          <button class="btn" onclick="nextPage()">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="resultScreen" style="display:none;">
+      <h2>Quiz Completed!</h2>
+      <p id="score"></p>
+      <div id="review"></div>
+      <button class="btn" onclick="restartQuiz()">Restart</button>
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
