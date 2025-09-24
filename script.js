@@ -1,144 +1,143 @@
- const quizzes = {
-      blood: {
-        title: "Blood Collection Equipment Quiz",
-        questions: [
-                
-        ]
-      },
-      capi: {
-        title: "Capillary Puncture",
-        questions: [
-
-        ]
-      },
-      veni: {
-        title: "Venipuncture",
-        questions: [
-        
-        ]
-      },
-      hemo: {
-        title: "Hemoglobin Determination",
-        questions: [
-   
-        ]
-      },
-      hema: {
-        title: "Hematocrit Determination",
-        questions: [
-
-        ]
-      }
-    };
-
-    let currentQuiz = null;
-    let currentIndex = 0;
-    let score = 0;
-    let userAnswers = [];
-
-    function selectQuiz(key) {
-      currentQuiz = quizzes[key];
-      startQuiz();
+let quizzes = {
+  quiz1: [
+    {
+      question: "Placeholder Q1 (Quiz 1)?",
+      options: ["A", "B", "C", "D"],
+      answer: 0
+    },
+    {
+      question: "Placeholder Q2 (Quiz 1)?",
+      options: ["A", "B", "C", "D"],
+      answer: 1
+    },
+    {
+      question: "Placeholder Q3 (Quiz 1)?",
+      options: ["A", "B", "C", "D"],
+      answer: 2
+    },
+    {
+      question: "Placeholder Q4 (Quiz 1)?",
+      options: ["A", "B", "C", "D"],
+      answer: 3
+    },
+    {
+      question: "Placeholder Q5 (Quiz 1)?",
+      options: ["A", "B", "C", "D"],
+      answer: 1
     }
-
-    function startQuiz() {
-      currentIndex = 0;
-      score = 0;
-      userAnswers = [];
-      showQuestions();
+  ],
+  quiz2: [
+    {
+      question: "Placeholder Q1 (Quiz 2)?",
+      options: ["A", "B", "C", "D"],
+      answer: 2
+    },
+    {
+      question: "Placeholder Q2 (Quiz 2)?",
+      options: ["A", "B", "C", "D"],
+      answer: 0
     }
+  ],
+  quiz3: [
+    {
+      question: "Placeholder Q1 (Quiz 3)?",
+      options: ["A", "B", "C", "D"],
+      answer: 1
+    },
+    {
+      question: "Placeholder Q2 (Quiz 3)?",
+      options: ["A", "B", "C", "D"],
+      answer: 3
+    }
+  ]
+};
 
-    function showQuestions() {
-      const container = document.getElementById('app');
-      container.innerHTML = '';
+let currentQuiz = [];
+let userAnswers = [];
+let currentPage = 0;
+const pageSize = 5;
 
-      // Header with Exit button
-      const header = document.createElement('div');
-      header.className = 'clearfix';
-      header.innerHTML = `
-        <h2 style="float:left">${currentQuiz.title}</h2>
-        <button class="btn exit-btn" onclick="exitQuiz()">Exit Quiz ✖</button>
+function selectQuiz(key) {
+  currentQuiz = quizzes[key];
+  userAnswers = new Array(currentQuiz.length).fill(null);
+  currentPage = 0;
+  document.getElementById("quizSelection").style.display = "none";
+  document.getElementById("quizScreen").style.display = "block";
+  loadPage();
+}
+
+function loadPage() {
+  const start = currentPage * pageSize;
+  const end = Math.min(start + pageSize, currentQuiz.length);
+  const questionsArea = document.getElementById("questionsArea");
+  questionsArea.innerHTML = "";
+  document.getElementById("progress").innerText =
+    `Questions ${start + 1}-${end} of ${currentQuiz.length}`;
+
+  for (let i = start; i < end; i++) {
+    const q = currentQuiz[i];
+    const div = document.createElement("div");
+    div.classList.add("question-block");
+    div.innerHTML = `<p><strong>Q${i + 1}:</strong> ${q.question}</p>`;
+    q.options.forEach((opt, idx) => {
+      const checked = userAnswers[i] === idx ? "checked" : "";
+      div.innerHTML += `
+        <label class="option">
+          <input type="radio" name="q${i}" value="${idx}" ${checked} 
+            onchange="userAnswers[${i}] = ${idx}">
+          ${opt}
+        </label>
       `;
-      container.appendChild(header);
+    });
+    questionsArea.appendChild(div);
+  }
+}
 
-      const quizDiv = document.createElement('div');
-      const end = Math.min(currentIndex + 3, currentQuiz.questions.length);
+function nextPage() {
+  if ((currentPage + 1) * pageSize < currentQuiz.length) {
+    currentPage++;
+    loadPage();
+  }
+}
 
-      for (let i = currentIndex; i < end; i++) {
-        const qDiv = document.createElement('div');
-        qDiv.className = 'question';
-        qDiv.innerHTML = `<h3>Q${i+1}. ${currentQuiz.questions[i].q}</h3>`;
-        const optsDiv = document.createElement('div');
-        optsDiv.className = 'options';
-        currentQuiz.questions[i].options.forEach((opt, idx) => {
-          optsDiv.innerHTML += `
-            <label>
-              <input type="radio" name="q${i}" value="${idx}">
-              ${opt}
-            </label>`;
-        });
-        qDiv.appendChild(optsDiv);
-        quizDiv.appendChild(qDiv);
-      }
+function prevPage() {
+  if (currentPage > 0) {
+    currentPage--;
+    loadPage();
+  }
+}
 
-      const btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = (end === currentQuiz.questions.length) ? 'Finish Quiz' : 'Next';
-      btn.onclick = () => submitAnswers(end);
-      quizDiv.appendChild(btn);
+function finishQuiz() {
+  let score = 0;
+  let reviewHTML = "";
+  currentQuiz.forEach((q, idx) => {
+    const userAns = userAnswers[idx];
+    if (userAns === q.answer) score++;
+    const correct = q.options[q.answer];
+    const userText = userAns !== null ? q.options[userAns] : "Not answered";
+    const cls = userAns === q.answer ? "correct" : "incorrect";
+    reviewHTML += `
+      <p><strong>Q${idx + 1}:</strong> ${q.question}<br>
+      Your Answer: <span class="${cls}">${userText}</span><br>
+      Correct Answer: <span class="correct">${correct}</span></p>
+    `;
+  });
 
-      const progress = document.createElement('div');
-      progress.className = 'progress';
-      progress.textContent = `Question ${end} of ${currentQuiz.questions.length}`;
-      quizDiv.appendChild(progress);
+  document.getElementById("quizScreen").style.display = "none";
+  document.getElementById("resultScreen").style.display = "block";
+  document.getElementById("score").innerText =
+    `You scored ${score} out of ${currentQuiz.length}`;
+  document.getElementById("review").innerHTML = reviewHTML;
+}
 
-      container.appendChild(quizDiv);
-    }
+function restartQuiz() {
+  document.getElementById("resultScreen").style.display = "none";
+  document.getElementById("quizSelection").style.display = "block";
+}
 
-    function submitAnswers(end) {
-      for (let i = currentIndex; i < end; i++) {
-        const selected = document.querySelector(`input[name="q${i}"]:checked`);
-        const answer = selected ? parseInt(selected.value) : -1;
-        userAnswers[i] = answer;
-        if (answer === currentQuiz.questions[i].answer) {
-          score++;
-        }
-      }
-      currentIndex = end;
-      if (currentIndex >= currentQuiz.questions.length) {
-        showResults();
-      } else {
-        showQuestions();
-      }
-    }
-
-    function showResults() {
-      const container = document.getElementById('app');
-      container.innerHTML = `
-        <div class="clearfix">
-          <h2 style="float:left">${currentQuiz.title} Complete!</h2>
-          <button class="btn exit-btn" onclick="exitQuiz()">Exit Quiz ✖</button>
-        </div>
-        <p>Your Score: ${score} / ${currentQuiz.questions.length}</p>
-        <div class="review">
-          <h3>Review:</h3>
-          ${currentQuiz.questions.map((q, i) => {
-            const correct = q.answer;
-            const user = userAnswers[i];
-            return `
-              <div>
-                <strong>Q${i+1}:</strong> ${q.q}<br>
-                Your Answer: ${user>=0?q.options[user]:"<em>Not answered</em>"}<br>
-                Correct Answer: <span class="correct">${q.options[correct]}</span>
-                ${user===correct?'<span class="correct"> ✔</span>':'<span class="wrong"> ✖</span>'}
-              </div>
-              <hr>`;
-          }).join('')}
-        </div>
-        <button class="btn" onclick="location.reload()">🔙 Back to Quiz List</button>
-      `;
-    }
-
-    function exitQuiz() {
-      location.reload();
-    }
+function exitQuiz() {
+  if (confirm("Are you sure you want to exit? Progress will be lost.")) {
+    document.getElementById("quizScreen").style.display = "none";
+    document.getElementById("quizSelection").style.display = "block";
+  }
+}
