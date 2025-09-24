@@ -31,11 +31,13 @@ h1, h2 {
   background: #005fa3;
 }
 .exit-btn {
-  float: right;
   background: #dc3545;
+  float: right;
 }
-.exit-btn:hover {
-  background: #b02a37;
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
 }
 .option {
   display: block;
@@ -44,20 +46,4 @@ h1, h2 {
   border: 1px solid #ccc;
   border-radius: 6px;
   cursor: pointer;
-}
-.option input {
-  margin-right: 0.5rem;
-}
-.nav-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
-.correct {
-  color: green;
-  font-weight: bold;
-}
-.incorrect {
-  color: red;
-  font-weight: bold;
 }
